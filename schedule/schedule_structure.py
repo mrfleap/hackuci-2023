@@ -46,7 +46,7 @@ class Professor:
 
 
 class Course:
-    def __init__(self, course_name: str, course_id: int, professors: list[str], time: Course_Time, location: str):
+    def __init__(self, course_name: str, course_id: str, professors: list[str], time: Course_Time, location: str):
         self.course_name = course_name
         self.course_id = course_id
         self.professors = professors
