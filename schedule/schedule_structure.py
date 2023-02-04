@@ -34,7 +34,16 @@ class Course_Time:
         return False
 
     def __str__(self) -> bool:
-        return f"{self.start // 100}:{self.start % 100 if self.start % 100 != 0 else '00'} - {self.end // 100}:{self.end % 100 if self.end % 100 != 0 else '00'} every {'Mon' if self.mon else ''}{'Tue' if self.tue else ''}{'Wed' if self.wed else ''}{'Thu' if self.thu else ''}{'Fri' if self.fri else ''}"
+        start, end = self.start, self.end
+        pm = False
+
+        if start > 1200:
+            start -= 1200
+        if end > 1200:
+            end -= 1200
+            pm = True
+
+        return f"{start // 100}:{start % 100 if start % 100 != 0 else '00'} - {end // 100}:{end % 100 if end % 100 != 0 else '00'}{'pm' if pm else ''}\n{'M' if self.mon else ''}{'Tue' if self.tue else ''}{'W' if self.wed else ''}{'Thu' if self.thu else ''}{'F' if self.fri else ''}{'Sat' if self.sat else ''}{'Sun' if self.sun else ''}"
 
 
 class Professor:
