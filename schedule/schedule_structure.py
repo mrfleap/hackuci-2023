@@ -4,7 +4,7 @@ import json
 import re
 from typing import Iterable, Self
 
-with open("/home/phillip/projects/hackuci-2023/schedule/course_schedule.json", "r") as f:
+with open("all_course_info.json", "r") as f:
     COURSE_SCHEDULE = json.loads(f.read())
 
 class Course_Time:
