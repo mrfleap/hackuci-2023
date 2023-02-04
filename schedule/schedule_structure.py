@@ -33,6 +33,9 @@ class Course_Time:
 
 
 class Professor:
+    """
+    DEPRECATED
+    """
     def __init__(self, first_name: str, last_name: str, department: str, school: str, rmp_id: int, tags: list, rating: float, take_again: bool, difficulty: float):
         self.rmp_id = rmp_id
         self.first_name = first_name
@@ -135,9 +138,9 @@ class Schedule:
     def totalUnits(self) -> int:
         return sum([c.units for c in self.courses])
     
-    def courseInSchedule(self, search_id: int) -> bool:
+    def courseInSchedule(self, search_id: str) -> bool:
         """
-        Checks if a course exists in the schedule with course_id.
+        Checks if a course exists in the schedule with search_id.
         """
         for course in self.courses:
             if course.course_id == search_id:
@@ -147,16 +150,19 @@ class Schedule:
     def addCourse(self, course: Course) -> bool:
         """
         Adds a course to the schedule.
-        Returns True if successfully added, False if course_id already exists in schedule
+        Returns True if successfully added, False if course_id already exists in schedule or schedule is invalid
         """
         if self.courseInSchedule(course.course_id): return False
         self.courses.append(course)
+        if not self.validSchedule():
+            self.courses.pop()
+            return False
         return True
 
-    def removeCourse(self, remove_id: int) -> bool:
+    def removeCourse(self, remove_id: str) -> bool:
         """
-        Removes a course from the schedule by course_id.
-        Returns True if successfully removed, False otherwise.
+        Removes a course from the schedule by remove_id.
+        Returns True if successfully removed, False if remove_id was not found.
         """
         for course in self.courses:
             if course.course_id == remove_id:

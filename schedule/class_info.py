@@ -95,7 +95,10 @@ if __name__ == "__main__":
     all_class = {}
     for department in getDepartments():
         time.sleep(0.5)
+        department = department.replace("&", "%26")
+        department = department.replace("/", "%2F")
         print(f"Processing {department}...")
+        
         all_class.update(getClassInfo(2023, "Winter", department))
 
     with open("all_course_info.json", "w") as fout:
