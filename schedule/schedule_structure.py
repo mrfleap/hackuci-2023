@@ -67,7 +67,7 @@ class Schedule:
     def __init__(self, courses: list[Course] = []):
         self.courses = courses
     
-    def courseInSchedule(self, search_id: int) -> bool:
+    def courseInSchedule(self, search_id: str) -> bool:
         """
         Checks if a course exists in the schedule with course_id.
         """
@@ -88,7 +88,7 @@ class Schedule:
             return False
         return True
 
-    def removeCourse(self, remove_id: int) -> bool:
+    def removeCourse(self, remove_id: str) -> bool:
         """
         Removes a course from the schedule by course_id.
         Returns True if successfully removed, False otherwise.
