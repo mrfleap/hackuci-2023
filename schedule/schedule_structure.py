@@ -24,7 +24,7 @@ class Course_Time:
 
 
 class Professor:
-    def __init__(self, rmp_id: int, first_name: str, last_name: str, department: str, school: str, tags: list, rating: float, take_again: bool, difficulty: float):
+    def __init__(self, first_name: str, last_name: str, department: str, school: str, rmp_id: int, tags: list, rating: float, take_again: bool, difficulty: float):
         self.rmp_id = rmp_id
         self.first_name = first_name
         self.last_name = last_name
@@ -38,13 +38,17 @@ class Professor:
     def __str__(self) -> None:
         return f"{self.first_name} {self.last_name}"
 
+    def detailedStr(self) -> str:
+        return f"{self.first_name} {self.last_name}\nDepartment: {self.department}\nSchool: {self.school}\nRateMyProfessor\n\tID: {self.rmp_id}\n\tRating: {self.rating}\n\tDifficulty: {self.difficulty}\n\tTake Again: {self.take_again}\n\tTags: {self.tags}"
+
 
 class Course:
-    def __init__(self, course_name: str, course_id: int, professor: Professor, time: Course_Time):
+    def __init__(self, course_name: str, course_id: int, professors: list[str], time: Course_Time, location: str):
         self.course_name = course_name
         self.course_id = course_id
-        self.professor = professor
+        self.professors = professors
         self.time = time
+        self.location = location
 
     def conflicts(self, other) -> bool:
         """
@@ -53,7 +57,7 @@ class Course:
         return self.time.conflicts(other.time)
 
     def __str__(self) -> None:
-        return f"{self.course_name}\nID: {self.course_id}\nProf: {self.professor}\n{self.time}"
+        return f"{self.course_name}\nID: {self.course_id}\nProf: {self.professor}\nLocation: {self.location}\n{self.time}"
 
 
 class Schedule:
