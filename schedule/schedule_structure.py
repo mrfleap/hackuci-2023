@@ -4,7 +4,12 @@ import json
 import re
 from typing import Iterable, Self
 
-with open("all_course_info.json", "r") as f:
+import os
+script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+rel_path = "all_course_info.json"
+abs_file_path = os.path.join(script_dir, rel_path)
+
+with open(abs_file_path, "r") as f:
     COURSE_SCHEDULE = json.loads(f.read())
 
 class Course_Time:
