@@ -1,12 +1,21 @@
+import copy
 from itertools import combinations
+import json
+import re
+from typing import Iterable, Self
+
+with open("/home/phillip/projects/hackuci-2023/schedule/course_schedule.json", "r") as f:
+    COURSE_SCHEDULE = json.loads(f.read())
 
 class Course_Time:
-    def __init__(self, mon: bool, tue: bool, wed: bool, thu: bool, fri: bool, start: int, end: int):
+    def __init__(self, mon: bool, tue: bool, wed: bool, thu: bool, fri: bool, sat: bool, sun: bool, start: int, end: int):
         self.mon = mon
         self.tue = tue
         self.wed = wed
         self.thu = thu
         self.fri = fri
+        self.sat = sat
+        self.sun = sun
         self.start = start
         self.end = end
 
@@ -43,12 +52,71 @@ class Professor:
 
 
 class Course:
-    def __init__(self, course_name: str, course_id: int, professors: list[str], time: Course_Time, location: str):
+    def __init__(self, course_name: str, course_id: str, professors: list[str], time: Course_Time, location: str, units: int, course_info: dict = None):
         self.course_name = course_name
         self.course_id = course_id
         self.professors = professors
         self.time = time
         self.location = location
+        self.units = units
+        self.course_info = course_info
+
+    @classmethod
+    def load_from_file(cls, only_names: Iterable[str]) -> list[Self]:
+        only_names = set(only_names)
+
+        courses = []
+        for (course, courses_data) in COURSE_SCHEDULE.items():
+            if course not in only_names:
+                continue
+
+            for course_data in courses_data:
+                # Use regex to parse 'MTuWThFSaSu' into a list of booleans mon, tue, wed, thu, fri, sat, sun based on whether each day exists in the string
+                days = course_data["time"]["days"]
+
+                start, end = None, None
+                if course_data["time"]["time"] != "TBA":
+                    start = int((course_data["time"]["time"].strip()).split("-")[0].replace(":", ""))
+                    end = int((course_data["time"]["time"].strip()).split("-")[1].replace(":", "").replace("p", ""))
+
+                if "p" in course_data["time"]["time"] and start and end:
+                    start += 1200
+                    end += 1200
+
+                courses.append(Course(
+                    course_name=course,
+                    course_id=course_data["ID"],
+                    professors=course_data["professors"],
+                    time=Course_Time(
+                        mon="M" in days,
+                        tue="Tu" in days,
+                        wed="W" in days,
+                        thu="Th" in days,
+                        fri="F" in days,
+                        sat="Sa" in days,
+                        sun="Su" in days,
+                        start=start,
+                        end=end,
+                    ),
+                    units=int(course_data["units"].split("-")[-1]) if "-" in course_data["units"] else int(course_data["units"]),
+                    location=course_data["location"].strip(),
+                    course_info=course_data,
+                ))
+        return courses
+
+    # @classmethod
+    # def from_course_id(cls, course_id: str) -> Self:
+    #     courses = [c for c in COURSES if c["id"] == course_id]
+
+    #     if not courses:
+    #         raise ValueError(f"Course with id {course_id} not found")
+
+    #     course = courses[0]
+    #     course_obj = Course(
+    #         course_name=course["department"] + " " + course["number"],
+    #         course_id=course["id"]
+    #         professors=
+    #     )
 
     def conflicts(self, other) -> bool:
         """
@@ -57,12 +125,15 @@ class Course:
         return self.time.conflicts(other.time)
 
     def __str__(self) -> None:
-        return f"{self.course_name}\nID: {self.course_id}\nProf: {self.professors}\nLocation: {self.location}\n{self.time}"
+        return f"{self.course_name}\nID: {self.course_id}\nProf: {self.professors}\nLocation: {self.location}\n{self.time if self.time.start else 'Time: TBA'}"
 
 
 class Schedule:
     def __init__(self, courses: list[Course] = []):
         self.courses = courses
+
+    def totalUnits(self) -> int:
+        return sum([c.units for c in self.courses])
     
     def courseInSchedule(self, search_id: int) -> bool:
         """
@@ -103,6 +174,9 @@ class Schedule:
                 if course1.conflicts(course2):
                     return False
         return True
+    
+    def copy(self) -> Self:
+        return copy.deepcopy(self)
 
     def __str__(self) -> None:
         return "".join(f"{course}\n" for course in self.courses)
