@@ -38,6 +38,9 @@ class Professor:
     def __str__(self) -> None:
         return f"{self.first_name} {self.last_name}"
 
+    def detailedStr(self) -> str:
+        return f"{self.first_name} {self.last_name}\nDepartment: {self.department}\nSchool: {self.school}\nRateMyProfessor\n\tID: {self.rmp_id}\n\tRating: {self.rating}\n\tDifficulty: {self.difficulty}\n\tTake Again: {self.take_again}\n\tTags: {self.tags}"
+
 
 class Course:
     def __init__(self, course_name: str, course_id: int, professor: Professor, time: Course_Time):
