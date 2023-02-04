@@ -57,7 +57,7 @@ class Course:
         return self.time.conflicts(other.time)
 
     def __str__(self) -> None:
-        return f"{self.course_name}\nID: {self.course_id}\nProf: {self.professor}\nLocation: {self.location}\n{self.time}"
+        return f"{self.course_name}\nID: {self.course_id}\nProf: {self.professors}\nLocation: {self.location}\n{self.time}"
 
 
 class Schedule:
