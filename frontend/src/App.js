@@ -11,7 +11,6 @@ import { ChakraProvider } from '@chakra-ui/react'
 function App() {
   return (
     <ChakraProvider>
-      <Nav></Nav>
       <Sidebar></Sidebar>
     </ChakraProvider>
   );
