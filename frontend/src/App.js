@@ -1,24 +1,19 @@
-import logo from './logo.svg';
 import './App.css';
+
+// Import nav from ./components/Nav.tsx
+import Nav from './components/Nav.tsx';
+import Sidebar from './components/Sidebar.tsx';
+// Or, if you want to use the default export:
+// import 'Nav' from './components/Nav';
+
+import { ChakraProvider } from '@chakra-ui/react'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider>
+      <Nav></Nav>
+      <Sidebar></Sidebar>
+    </ChakraProvider>
   );
 }
 
