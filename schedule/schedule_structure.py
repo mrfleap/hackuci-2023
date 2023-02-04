@@ -76,10 +76,13 @@ class Schedule:
     def addCourse(self, course: Course) -> bool:
         """
         Adds a course to the schedule.
-        Returns True if successfully added, False if course_id already exists in schedule
+        Returns True if successfully added, False if course_id already exists in schedule or schedule is invalid
         """
         if self.courseInSchedule(course.course_id): return False
         self.courses.append(course)
+        if not self.validSchedule():
+            self.courses.pop()
+            return False
         return True
 
     def removeCourse(self, remove_id: int) -> bool:
