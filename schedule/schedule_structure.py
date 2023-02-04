@@ -69,7 +69,7 @@ class Schedule:
     
     def courseInSchedule(self, search_id: str) -> bool:
         """
-        Checks if a course exists in the schedule with course_id.
+        Checks if a course exists in the schedule with search_id.
         """
         for course in self.courses:
             if course.course_id == search_id:
@@ -90,8 +90,8 @@ class Schedule:
 
     def removeCourse(self, remove_id: str) -> bool:
         """
-        Removes a course from the schedule by course_id.
-        Returns True if successfully removed, False otherwise.
+        Removes a course from the schedule by remove_id.
+        Returns True if successfully removed, False if remove_id was not found.
         """
         for course in self.courses:
             if course.course_id == remove_id:
