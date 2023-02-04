@@ -78,7 +78,7 @@ def getAllCourseNames() -> None:
 
 
 with open("all_course_names.txt", "r") as fin:
-    counter = 0
+    # counter = 0
     all_class = {}
 
     for line in fin:
@@ -87,9 +87,9 @@ with open("all_course_names.txt", "r") as fin:
         print(f"Retrieving {course[0]} {course[1]} information...")
         all_class.update(getClassInfo(2023, "Winter", course[0], course[1]))
 
-        counter += 1
-        if counter == 6:
-            break
+        # counter += 1
+        # if counter == 6:
+        #     break
 
     with open("all_course_info.json", "w") as fout:
         json.dump(all_class, fout)
