@@ -23,16 +23,17 @@ import React from "react";
 import { FiBarChart2 } from "react-icons/fi";
 
 export default function Course(props) {
+    const label = props.record?.label || props.schedule.course_name;
     return (
         <Card w="100%">
             <CardBody>
                 <Flex alignContent="center" justifyContent="center">
                     <Box>
-                        <Text>{props.record.label}</Text>
+                        <Text>{label}</Text>
                         <Text color={useColorModeValue("gray.500", "gray.500")}>Upper-division | 4 units</Text>
                     </Box>
                     <Spacer minW="8" />
-                    <IconButton aria-label="Remove course" icon={<DeleteIcon />} onClick={props.remove} />
+                    {props.record ? <IconButton aria-label="Remove course" icon={<DeleteIcon />} onClick={props.remove} /> : null}
                 </Flex>
                 <Popover>
                     <Flex alignContent="center" justifyContent="center" mt="6" gap="2">
@@ -74,7 +75,7 @@ export default function Course(props) {
                     <PopoverContent>
                         <PopoverArrow />
                         <PopoverCloseButton />
-                        <PopoverHeader>{props.record.label}</PopoverHeader>
+                        <PopoverHeader>{label}</PopoverHeader>
                         <PopoverBody>
                             <Text fontSize={13}>{props.record.description}</Text>
                             <Text fontSize={13} as="b">Prerequisite: </Text><Text fontSize={13}>{props.record.prereq}</Text>

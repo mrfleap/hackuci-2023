@@ -1,10 +1,19 @@
-from typing import Union
+import inspect
+import os
+import sys
+from typing import Any, List, Union
 import orjson
 
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
 from fuzzy_match import algorithims
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir) 
+
+from schedule.schedule_structure import Course, Course_Time, Schedule
 
 app = FastAPI()
 
@@ -78,3 +87,15 @@ async def search_classes(query: str):
     search = courses.search(query)
 
     return {"classes": search["hits"]}
+
+@app.post("/generate")
+async def generate(body: dict = Body(...)):
+    print(body.get("clasess", {}))
+    schedules = [
+        Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
+        Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
+        Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
+        Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
+    ]
+    
+    return {"ok": True, "schedules": schedules}
