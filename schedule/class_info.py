@@ -20,12 +20,17 @@ def getInfo(response: dict) -> list[dict]:
     info = []
 
     for section in response["schools"][0]["departments"][0]["courses"][0]["sections"]:
+        sectionType = section["sectionType"]
+        sectionNum = section["sectionNum"]
+        units = section["units"]
+        finalExam = section["finalExam"]
         course_id = section["sectionCode"]
         professors = section["instructors"]
         location = section["meetings"][0]["bldg"]
         course_time = {"days": section["meetings"][0]["days"], "time": section["meetings"][0]["time"]}
-        info.append({"ID": course_id, "professors": professors, "location": location, "time": course_time})
+        info.append({"ID": course_id, "sectionType": sectionType, "sectionNum": sectionNum, "units": units, "finalExam": finalExam, "professors": professors, "location": location, "time": course_time})
 
+        print(course_id)
         # time = Course_Time(False, False, False, False, False, 0, 0)
         # if "M" in section["meetings"][0]["days"]:
         #     time.mon = True
@@ -85,7 +90,10 @@ with open("all_course_names.txt", "r") as fin:
         course = line.strip().rsplit(sep=" ", maxsplit=1)
         time.sleep(0.1)
         print(f"Retrieving {course[0]} {course[1]} information...")
+        course[0] = course[0].replace("&", "%26")
+        course[0] = course[0].replace("/", "%2F")
         all_class.update(getClassInfo(2023, "Winter", course[0], course[1]))
+        print()
 
         # counter += 1
         # if counter == 6:
@@ -93,3 +101,9 @@ with open("all_course_names.txt", "r") as fin:
 
     with open("all_course_info.json", "w") as fout:
         json.dump(all_class, fout)
+    
+# course = ["CRM/LAW", "C7"]
+# course[0] = course[0].replace("&", "%26")
+# course[0] = course[0].replace("/", "%2F")
+# print(course[0])
+# print(getClassInfo(2023, "Winter", course[0], course[1]))
