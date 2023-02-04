@@ -24,7 +24,7 @@ class Course_Time:
         self.start = start
         self.end = end
 
-    def conflicts(self, other) -> bool:
+    def conflicts(self, other: Self) -> bool:
         """
         Checks if one Course_Time conflicts with another, returning True if they do conflict
         """
@@ -126,7 +126,7 @@ class Course:
     #         professors=
     #     )
 
-    def conflicts(self, other) -> bool:
+    def conflicts(self, other: Self) -> bool:
         """
         Checks if one Course conflicts with another, returns True if they do conflict
         """
