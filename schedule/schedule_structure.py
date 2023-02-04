@@ -1,7 +1,7 @@
 from itertools import combinations
 
 class Course_Time:
-    def __init__(self, mon: bool, tue: bool, wed: bool, thu: bool, fri: bool, start: int, end: int):
+    def __init__(self, mon: bool=False, tue: bool=False, wed: bool=False, thu: bool=False, fri: bool=False, start: int=0, end: int=0, final_time: int=0, final_date: str=""):
         self.mon = mon
         self.tue = tue
         self.wed = wed
@@ -9,14 +9,18 @@ class Course_Time:
         self.fri = fri
         self.start = start
         self.end = end
+        self.final_time = final_time
+        self.final_date = final_date
 
     def conflicts(self, other) -> bool:
         """
         Checks if one Course_Time conflicts with another, returning True if they do conflict
         """
         if self.mon and other.mon or self.tue and other.tue or self.wed and other.wed or self.thu and other.thu or self.fri and other.fri:
-            if self.start < other.end and other.start < self.end:
+            if (self.start < other.end and other.start < self.end):
                 return True
+        if self.final_date == other.final_date and self.final_time == other.final_time:
+            return True
         return False
 
     def __str__(self) -> bool:
