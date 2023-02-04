@@ -13,7 +13,7 @@ with open(abs_file_path, "r") as f:
     COURSE_SCHEDULE = json.loads(f.read())
 
 class Course_Time:
-    def __init__(self, mon: bool=False, tue: bool=False, wed: bool=False, thu: bool=False, fri: bool=False, sat: bool=False, sun: bool=False start: int=0, end: int=0, final_time: int=0, final_date: str=""):
+    def __init__(self, mon: bool=False, tue: bool=False, wed: bool=False, thu: bool=False, fri: bool=False, sat: bool=False, sun: bool=False, start: int=0, end: int=0, final_time: int=0, final_date: str=""):
         self.mon = mon
         self.tue = tue
         self.wed = wed
