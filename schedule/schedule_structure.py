@@ -24,6 +24,9 @@ class Course_Time:
 
 
 class Professor:
+    """
+    DEPRECATED
+    """
     def __init__(self, first_name: str, last_name: str, department: str, school: str, rmp_id: int, tags: list, rating: float, take_again: bool, difficulty: float):
         self.rmp_id = rmp_id
         self.first_name = first_name
