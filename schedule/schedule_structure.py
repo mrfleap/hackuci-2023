@@ -1,7 +1,6 @@
 import copy
 from itertools import combinations
 import json
-import re
 import csv
 from typing import Iterable
 from typing import Any as Self
