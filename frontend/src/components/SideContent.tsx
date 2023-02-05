@@ -3,7 +3,7 @@ import { Box, Button, CloseButton, Flex, Heading, Image, Input, InputGroup, Inpu
 import Course from "./Course.tsx";
 
 import { AsyncSelect, chakraComponents } from "chakra-react-select";
-import peter from "../peter.jpg";
+import peter from "../peter-transformed.png";
 
 import axios from "axios";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
@@ -39,7 +39,7 @@ function SideContent(props) {
     const fetchCourses = () => {
         setIsLoading(true);
         axios
-            .post("http://localhost:8080/generate", {
+            .post("https://zotapi.fly.dev/generate", {
                 classes: classes,
                 units: units,
             })
@@ -97,7 +97,7 @@ function SideContent(props) {
                         noOptionsMessage={() => (input.length <= 0 ? "Type to search for a class..." : "No classes found")}
                         loadOptions={(inputValue, callback) => {
                             axios
-                                .get("http://localhost:8080/search_classes", {
+                                .get("https://zotapi.fly.dev/search_classes", {
                                     params: {
                                         query: inputValue,
                                     },
@@ -153,7 +153,7 @@ function SideContent(props) {
                     <InputGroup size="md">
                         <Input placeholder="16" type="number" value={units} onChange={(e) => {
                             // Limit to units to 0-32 and send a toast otherwise
-                            if (e.target.value < 2 || e.target.value > 32) {
+                            if (e.target.value < 0 || e.target.value > 32) {
                                 toast({
                                     position: "bottom-right",
                                     title: "Invalid Number of Units",

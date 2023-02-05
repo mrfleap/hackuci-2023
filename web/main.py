@@ -135,6 +135,8 @@ async def generate(body: dict = Body(...)):
     print(f"Possible schedules: {len(possible_schedules)}")
     start = time.time()
     rank_schedules(possible_schedules)
+    possible_schedules = possible_schedules[:20]
+
     print(f"Ranking took {time.time()-start:.2f}s to run")
 
     for schedule in possible_schedules:

@@ -84,7 +84,7 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
     }
 
     return (
-        <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
+        <Box bg={useColorModeValue("gray.100", "gray.900")}>
             <SidebarContent onClose={() => onClose} display={{ base: "none", md: "block" }} setSchedules={setSchedules} />
             <Drawer
                 autoFocus={false}
