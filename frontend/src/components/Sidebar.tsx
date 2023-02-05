@@ -101,7 +101,7 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
             </Drawer>
             {/* mobilenav */}
             <MobileNav onOpen={onOpen} />
-            <Box ml={{ base: 0, md: "45%", xl: "40rem" }} p="4" h="100vh">
+            <Box ml={{ base: 0, md: "45%", xl: "40rem" }} p="4" h={{ base: "100%", md: "100vh"}}>
                 {schedules.length > 0 ? (
                     <Flex flexWrap={"wrap"} gap="4" flexFlow={"row wrap"} alignContent="flex-start" backgroundColor={color}>
                         {schedules.map((s, i) => (
