@@ -1,11 +1,11 @@
-from schedule_structure import Course, Schedule
+from .schedule_structure import Course, Schedule
 
 
 
 def get_available_courses(course_names: list[str]) -> list[Course]:
     return Course.load_from_file(course_names)
 
-def generate_possible_schedules(courses: list[Course], schedule: Schedule, units: int = 12, _ignore_names: set[str] = None) -> list[Schedule]:
+def generate_possible_schedules(courses: list[Course], schedule: Schedule, units: int = 16, _ignore_names: set[str] = None, _ignore_codes: set[str] = None) -> list[Schedule]:
 
     if schedule.totalUnits() > units:
         return []
@@ -13,19 +13,24 @@ def generate_possible_schedules(courses: list[Course], schedule: Schedule, units
         return [schedule]
 
     ignore_names = _ignore_names or set()
+    ignore_codes = _ignore_codes or set()
 
     schedules = []
     for course in courses:
-        if course.course_name in ignore_names:
+        if course.course_name in ignore_names or course.units <= 0 or course.course_id in ignore_codes:
             continue
-
-        valid_add = schedule.addCourse(course)
-        if valid_add and schedule.validSchedule():
-            print(f"Add course {course.course_name}")
-            schedules.extend([s.copy() for s in generate_possible_schedules(courses, schedule, _ignore_names=ignore_names | {course.course_name,})])
-            schedule.removeCourse(course.course_id)
         
-        ignore_names.add(course.course_name)
+        # print(f"Before add: {schedule.totalUnits()}")
+        valid_add = schedule.addCourse(course)
+        # print(f"Add course {course.course_name} ({course.units}), total units: {schedule.totalUnits()}")
+        # print(f"Valid add: {valid_add} valid schedule: {schedule.validSchedule()}")
+        if valid_add:
+            # print(f"Testing inner, starting with {schedule.totalUnits()}")
+            schedules.extend([s.copy() for s in generate_possible_schedules(courses, schedule, _ignore_names=ignore_names | {course.course_name,}, units=units, _ignore_codes=ignore_codes | {course.course_id,})])
+
+        schedule.removeCourse(course.course_id)
+        
+        ignore_codes.add(course.course_id)
 
     return schedules
 

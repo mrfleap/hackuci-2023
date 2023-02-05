@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, CloseButton, Flex, Text, useColorMode, useDisclosure, useToast } from "@chakra-ui/react";
+import { Box, Button, CloseButton, Flex, Input, InputGroup, InputRightAddon, Text, useColorMode, useDisclosure, useToast } from "@chakra-ui/react";
 import Course from "./Course.tsx";
 
 import { AsyncSelect, chakraComponents } from "chakra-react-select";
@@ -59,7 +59,7 @@ function SideContent(props) {
         <>
             <Flex justifyContent={"space-between"} flexDirection={"column"} h="100%">
                 <Box w="100%">
-                    <Flex h="20" alignItems="center" justifyContent="space-between">
+                    <Flex h="20" alignItems="center" justifyContent="space-between" flex="0 0 auto">
                         <Text fontSize="2xl" fontWeight="bold">
                             Wanted Classes
                         </Text>
@@ -85,21 +85,33 @@ function SideContent(props) {
                         }}
                         value={value}
                     />
-                    <Flex mt="8" gap="2" alignItems="center" flexDirection="column">
-                        {classes.map((v, i) => (
-                            <Course
-                                key="i"
-                                record={v}
-                                remove={() => {
-                                    setClasses(classes.filter((c) => c != v));
-                                }}
-                            ></Course>
-                        ))}
-                    </Flex>
                 </Box>
-                <Button isLoading={isLoading} loadingText="Generating Schedules..." colorScheme="blue" onClick={fetchCourses}>
-                    Generate Schedules
-                </Button>
+                <Flex pt="8" gap="2" flexDirection="column" flexGrow="1" overflowY="auto">
+                    {classes.map((v, i) => (
+                        <Course
+                            key="i"
+                            record={v}
+                            remove={() => {
+                                setClasses(classes.filter((c) => c != v));
+                            }}
+                        ></Course>
+                    ))}
+                </Flex>
+                <Flex gap="4" flexDir="row">
+                    <InputGroup size="sm">
+                        <Input placeholder="16" />
+                        <InputRightAddon children="Units" />
+                    </InputGroup>
+                    <Button
+                        isLoading={isLoading}
+                        loadingText="Generating Schedules..."
+                        colorScheme="blue"
+                        onClick={fetchCourses}
+                        flex="0 0 auto"
+                    >
+                        Generate Schedules
+                    </Button>
+                </Flex>
             </Flex>
         </>
     );
