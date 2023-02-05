@@ -14,3 +14,10 @@ part2
 part3
  - run npm install in frontend directory
  - run "npm run start"
+
+
+docker
+ - open web directory
+ - `docker build . -t web`
+ - `docker run --net=host web`
+ - run meilisearch command
