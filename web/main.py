@@ -26,8 +26,8 @@ app.add_middleware(
 )
 
 def load_courses():
-    with open("courses.json", "r") as f:
-        courses_data = orjson.loads(f.read())
+    with open("courses.json", "rb") as f:
+        courses_data = orjson.load(f)
 
     values = []
     index = []
