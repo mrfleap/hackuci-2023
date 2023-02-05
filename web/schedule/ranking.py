@@ -19,18 +19,25 @@ scores["score"] = pd.read_csv(os.path.join(script_dir, "score.csv"))
 
 def class_score(professor, course):
     total = []
-    if professor in scores:
+    # print(f"Professor: {professor}, Course: {course}, {not scores[scores.name == professor].empty}, {not grades[grades.course_name == course].empty}")
+    if not scores[scores.name == professor].empty:
+        # print("adding total")
         total.append(scores[scores.name == professor]["score"].iloc[0])
+    else:
+        total.append(0.35)
     
-    if course in grades.course_name:
+    if not grades[grades.course_name == course].empty:
+        # print("adding course")
         total.append(grades[grades.course_name == course]["avg_gpa"].iloc[0])
-    return sum(total) / len(total) if total else None
+    else:
+        total.append(0.35)
+    return sum(total) / len(total) if total else 0.40
 
 def get_schedule_score(schedule):
     scores = []
     for i in schedule.courses:
         score = class_score(i.professors[0], i.course_name)
-        if score:
-            scores.append(score)
+        i.score = score
+        scores.append(score)
 
-    return sum(scores) /  len(scores) if scores else 0.5
+    return sum(scores) /  len(scores) if scores else 0.25

@@ -27,6 +27,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+COURSE_MAP = {
+    "I&C SCI": "ICS",
+    "COMPSCI": "CS",
+    "IN4MATX": "INF",
+    "BIO SCI": "BIO",
+    "CHC/LAT": "CLS",
+    "HUMAN": "HUM",
+
+}
+
 def load_courses():
     with open("courses.json", "rb") as f:
         courses_data = orjson.load(f)
@@ -36,10 +46,15 @@ def load_courses():
 
     for i, course in enumerate(courses_data):
         label = course["department"] + " " + course["number"] + " - " + course["title"]
+        label2 = None
+        if course["department"] in COURSE_MAP:
+            label2 = COURSE_MAP[course["department"]] + " " + course["number"] + " - " + course["title"]
+
         values.append({
             "id": i,
             "value": course["id"],
             "label": label,
+            "label2": label2,
             "department": course["department"],
             "number": course["number"],
             "description": course["description"],
@@ -69,7 +84,7 @@ if __name__ == "__main__":
     client.index("courses").delete()
     time.sleep(2)
     client.index("courses").add_documents(COURSES)
-    courses.update_searchable_attributes(["course", "label", "description"])
+    courses.update_searchable_attributes(["course", "label", "label2", "description"])
 #     courses.update_ranking_rules(["typo",
 #   "exactness",
 #   "proximity",
@@ -106,7 +121,7 @@ async def generate(body: dict = Body(...)):
     if not body.get("classes", {}):
         return {"ok": False, "error": "No classes provided", "schedules": []}
     
-    units = int(body.get("units", 16))
+    units = int(body.get("units", None) or 16)
 
     wanted_classes = [c["course"] for c in body["classes"]]
     print(f"Wanted courses: {len(wanted_classes)}")
@@ -121,8 +136,6 @@ async def generate(body: dict = Body(...)):
     start = time.time()
     rank_schedules(possible_schedules)
     print(f"Ranking took {time.time()-start:.2f}s to run")
-
-    possible_schedules = possible_schedules[:20] + possible_schedules[-20:]
 
     for schedule in possible_schedules:
         for course in schedule.courses:

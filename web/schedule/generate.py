@@ -37,15 +37,11 @@ def generate_possible_schedules(courses: list[Course], schedule: Schedule, units
     return schedules
 
 def rank_schedules(schedules: list[Schedule]):
-    def compare_schedule(s1, s2):
-        s1, s2 = get_schedule_score(s1), get_schedule_score(s2)
-        if s1 < s2:
-            return -1
-        elif s1 > s2:
-            return 1
-        return 0
+    for s in schedules:
+        s.score = get_schedule_score(s)
 
-    schedules.sort(key=cmp_to_key(lambda s1, s2: get_schedule_score(s1) - get_schedule_score(s2)))
+    schedules.sort(key=lambda s: s.score, reverse=True)
+    # schedules.sort(key=cmp_to_key(lambda s1, s2: get_schedule_score(s1) - get_schedule_score(s2)))
 
 
 if __name__ == "__main__":

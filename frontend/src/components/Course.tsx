@@ -29,12 +29,30 @@ export default function Course(props) {
         <Card w="100%">
             <CardBody>
                 <Flex alignContent="center" justifyContent="center">
-                    <Box>
-                        <Text>{label}</Text>
-                        <Text color={useColorModeValue("gray.500", "gray.500")}>
-                            {record.course_level} | {record.units} Units {props.schedule ? `| ${props.schedule.course_id}` : ""}
-                        </Text>
-                    </Box>
+                    {!props.schedule ? (
+                        <Box>
+                            <Text>{label}</Text>
+                            <Text color={"gray.500"}>
+                                {record.course_level} | {record.units} Units{" "}
+                            </Text>
+                        </Box>
+                    ) : (
+                        <Box>
+                            <Flex direction="row">
+                                <Text as="b" size="xl">
+                                    {label}
+                                </Text>
+                                <Text color="gray.500" ml="2">
+                                    {record.units} Units
+                                </Text>
+                            </Flex>
+                            <Text color={"gray.500"}>
+                                {props.schedule
+                                    ? `${props.schedule.course_id} | ZotRating: ${(props.schedule.score * 5).toFixed(0)}/5`
+                                    : ""}
+                            </Text>
+                        </Box>
+                    )}
                     <Spacer minW="8" />
                     {props.record ? (
                         <IconButton aria-label="Remove course" icon={<DeleteIcon />} onClick={props.remove} />
@@ -45,31 +63,40 @@ export default function Course(props) {
                     )}
                 </Flex>
                 {props.schedule ? (
-                    <Flex alignContent="center" justifyContent="center">
-                        <Text whiteSpace="pre-line">{props.schedule.professors.join("\n")}</Text>
-                        <Text color="gray.500" whiteSpace="pre-line">
-                            RateMyProfessor:{" "}
-                            {typeof props.schedule.median_gpa == "number"
-                                ? props.schedule.rmp.toFixed(1)
-                                : props.schedule.rmp}
-                            /5
-                        </Text>
-                        <Spacer minW="8" />
-                        <Text color="gray.500">
-                            Avg. GPA:{" "}
-                            {typeof props.schedule.median_gpa == "number"
-                                ? props.schedule.median_gpa.toFixed(1)
-                                : props.schedule.median_gpa}
-                        </Text>
-                    </Flex>
+                    <Box>
+                        <Flex alignContent="center" justifyContent="space-between" mt="2">
+                            <Text whiteSpace="pre-line">{props.schedule.professors[0]}</Text>
+                            {props.schedule.professors.length > 1 ? (
+                                <Text whiteSpace="pre-line" color="gray.600" fontSize="sm">
+                                    {props.schedule.professors.slice(1).join(", ")}
+                                </Text>
+                            ) : null}
+                        </Flex>
+                        <Flex alignContent="center" justifyContent="center">
+                            <Text color="gray.500" whiteSpace="pre-line">
+                                RateMyProfessor:{" "}
+                                {typeof props.schedule.median_gpa == "number" ? props.schedule.rmp.toFixed(1) : props.schedule.rmp}
+                                /5
+                            </Text>
+                            <Spacer minW="8" />
+                            <Text color="gray.500">
+                                Avg. GPA:{" "}
+                                {typeof props.schedule.median_gpa == "number"
+                                    ? props.schedule.median_gpa.toFixed(1)
+                                    : props.schedule.median_gpa}
+                            </Text>
+                        </Flex>
+                    </Box>
                 ) : null}
                 <Popover>
-                    <Flex alignContent="center" justifyContent="center" mt="6" gap="2">
+                    <Flex alignContent="center" justifyContent="space-between" mt="6" gap="2">
+                        <Spacer />
                         <PopoverTrigger>
                             <Button leftIcon={<InfoOutlineIcon />} variant="outline">
                                 Class Info
                             </Button>
                         </PopoverTrigger>
+                        <Spacer />
 
                         <Button
                             leftIcon={<FiBarChart2 />}
@@ -82,8 +109,8 @@ export default function Course(props) {
                                 f.name = "zotistics";
 
                                 Object.entries({
-                                    selectDep: props.record.department,
-                                    classNum: props.record.number,
+                                    selectDep: record.department,
+                                    classNum: record.number,
                                     code: "",
                                     teacher: "",
                                     csrf_token:
@@ -103,11 +130,12 @@ export default function Course(props) {
                         >
                             Zotistics
                         </Button>
+                        <Spacer />
                     </Flex>
                     <PopoverContent>
                         <PopoverArrow />
                         <PopoverCloseButton />
-                        <PopoverHeader>{label}</PopoverHeader>
+                        <PopoverHeader>{record.label}</PopoverHeader>
                         <PopoverBody>
                             <Text fontSize={13}>{record.description}</Text>
                             <Text fontSize={13} as="b">

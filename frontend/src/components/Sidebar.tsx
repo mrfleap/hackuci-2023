@@ -76,6 +76,12 @@ const LinkItems: Array<LinkItemProps> = [
 export default function SimpleSidebar({ children }: { children: ReactNode }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [schedules, setSchedules] = useState([]);
+    const color = useColorModeValue("gray.100", "gray.900");
+    if (color === "gray.100") {
+        document.querySelector("html").style["background-color"] = "#EDF2F7";
+    } else {
+        document.querySelector("html").style["background-color"] = "#1A202C";
+    }
 
     return (
         <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
@@ -97,7 +103,7 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
             <MobileNav onOpen={onOpen} />
             <Box ml={{ base: 0, md: "45%", xl: "40rem" }} p="4" h="100vh">
                 {schedules.length > 0 ? (
-                    <Flex flexWrap={"wrap"} gap="4" flexFlow={"row wrap"} alignContent="flex-start">
+                    <Flex flexWrap={"wrap"} gap="4" flexFlow={"row wrap"} alignContent="flex-start" backgroundColor={color}>
                         {schedules.map((s, i) => (
                             <Schedule schedule={s} key={i} n={i + 1} />
                         ))}

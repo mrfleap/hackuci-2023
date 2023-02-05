@@ -52,7 +52,7 @@ class Course_Time:
         time_str = f"{start // 100}:{start % 100 if start % 100 != 0 else '00'} - {end // 100}:{end % 100 if end % 100 != 0 else '00'}{'pm' if pm else ''}" if (start and end) else "TBA"
         day_str = "/".join(d for i, d in enumerate(["M", "Tu", "W", "Th", "F", "Sat", "Sun"]) if [self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun][i])
 
-        return time_str + "\n" + day_str
+        return time_str + " " + day_str
 
 
 class Professor:
@@ -122,6 +122,8 @@ class Course:
                 continue
 
             for course_data in courses_data:
+                if course_data["sectionType"].upper() in ["DIS"]:
+                    continue
                 # Use regex to parse 'MTuWThFSaSu' into a list of booleans mon, tue, wed, thu, fri, sat, sun based on whether each day exists in the string
                 days = course_data["time"]["days"]
 

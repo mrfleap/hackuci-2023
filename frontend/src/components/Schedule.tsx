@@ -39,53 +39,62 @@ const Schedule = (props) => {
         <Card flexGrow={1}>
             <CardBody>
                 <Flex dir="row" justifyContent="space-between">
-                    <Heading as="h3" mb="4">
-                        Schedule {props.n}
-                    </Heading>
-                    <Button variant="outline" colorScheme="blue" onClick={() => {
-                        const code = randomWords({ exactly: 3, join: "-" });
-                        const payload = {
-                            userID: code,
-                            userData: {
-                                addedCourses: props.schedule.courses.map((course, i) => ({
-                                    color: randomColor(),
-                                    term: "2023 Winter",
-                                    sectionCode: course.course_id,
-                                    scheduleIndices: [0],
-                                })),
-                            },
-                            scheduleNames: ["2023 Winter"],
-                            customEvents: [],
-                        };
+                    <Box mb="4">
+                        <Heading as="h3">
+                            Schedule {props.n}
+                        </Heading>
+                        <Text color="gray.500">ZotRating: {(props.schedule.score * 100).toFixed(0)}/100</Text>
+                    </Box>
+                    <Button
+                        variant="outline"
+                        colorScheme="blue"
+                        onClick={() => {
+                            const code = randomWords({ exactly: 3, join: "-" });
+                            const payload = {
+                                userID: code,
+                                userData: {
+                                    addedCourses: props.schedule.courses.map((course, i) => ({
+                                        color: randomColor(),
+                                        term: "2023 Winter",
+                                        sectionCode: course.course_id,
+                                        scheduleIndices: [0],
+                                    })),
+                                },
+                                scheduleNames: ["2023 Winter"],
+                                customEvents: [],
+                            };
 
-                        // fetch("https://api.antalmanac.com/api/users/saveUserData", {
-                        //     credentials: "omit",
-                        //     headers: {
-                        //         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/110.0",
-                        //         Accept: "*/*",
-                        //         "Accept-Language": "en-US,en;q=0.5",
-                        //         "Content-Type": "application/json",
-                        //     },
-                        //     referrer: "https://antalmanac.com/",
-                        //     body: JSON.stringify(payload),
-                        //     method: "POST",
-                        // });
+                            // fetch("https://api.antalmanac.com/api/users/saveUserData", {
+                            //     credentials: "omit",
+                            //     headers: {
+                            //         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/110.0",
+                            //         Accept: "*/*",
+                            //         "Accept-Language": "en-US,en;q=0.5",
+                            //         "Content-Type": "application/json",
+                            //     },
+                            //     referrer: "https://antalmanac.com/",
+                            //     body: JSON.stringify(payload),
+                            //     method: "POST",
+                            // });
 
-                        // Send a request to https://zotapi.fly.dev /save with the body payload json
-                        axios.post("https://zotapi.fly.dev/save", payload).then((res) => {
-                            // Show a Chakra ui toast with the code and instructions to put it into antalmanac.com
-                            toast({
-                                title: "Saved to AntAlmanac",
-                                position: "bottom-right",
-                                description: `Your schedule has been saved to AntAlmanac. You can access it by heading to https://antalmanac.com and entering the code '${code}'`,
-                                status: "success",
-                                duration: 15000,
-                                isClosable: true,
+                            // Send a request to http://localhost:8080 /save with the body payload json
+                            axios.post("http://localhost:8080/save", payload).then((res) => {
+                                // Show a Chakra ui toast with the code and instructions to put it into antalmanac.com
+                                toast({
+                                    title: "Saved to AntAlmanac",
+                                    position: "bottom-right",
+                                    description: `Your schedule has been saved to AntAlmanac. You can access it by heading to https://antalmanac.com and entering the code '${code}'`,
+                                    status: "success",
+                                    duration: 15000,
+                                    isClosable: true,
+                                });
                             });
-                        });
-                    }}>Save to AntAlmanac</Button>
+                        }}
+                    >
+                        Save to AntAlmanac
+                    </Button>
                 </Flex>
-                <Flex alignContent="center" justifyContent="center" direction={"column"} gap="2">
+                <Flex alignContent="center" justifyContent="center" direction={"column"} gap="4">
                     {props.schedule.courses.map((course, i) => (
                         <Course key={i} schedule={course} />
                     ))}

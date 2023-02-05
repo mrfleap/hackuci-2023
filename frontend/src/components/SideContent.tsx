@@ -39,7 +39,7 @@ function SideContent(props) {
     const fetchCourses = () => {
         setIsLoading(true);
         axios
-            .post("https://zotapi.fly.dev/generate", {
+            .post("http://localhost:8080/generate", {
                 classes: classes,
                 units: units,
             })
@@ -49,7 +49,7 @@ function SideContent(props) {
                     toast({
                         position: "bottom-right",
                         title: "No Schedules Possible",
-                        description: "Try adding more classes or increasing the number of units.",
+                        description: "Try adding more classes or changing the number of units.",
                         status: "warning",
                         duration: 5000,
                         isClosable: true,
@@ -97,7 +97,7 @@ function SideContent(props) {
                         noOptionsMessage={() => (input.length <= 0 ? "Type to search for a class..." : "No classes found")}
                         loadOptions={(inputValue, callback) => {
                             axios
-                                .get("https://zotapi.fly.dev/search_classes", {
+                                .get("http://localhost:8080/search_classes", {
                                     params: {
                                         query: inputValue,
                                     },
@@ -107,7 +107,7 @@ function SideContent(props) {
                         onChange={(v) => {
                             setValue(null);
                             // Cancel if class is already in classes based on class.course_id
-                            if (classes.some((c) => c.course_id == v.course_id)) {
+                            if (classes.some((c) => c.value == v.value)) {
                                 // Add a short toast (3s) that indicates the class was already added, including the course.name
                                 toast({
                                     position: "bottom-right",
@@ -151,7 +151,22 @@ function SideContent(props) {
                 </Flex>
                 <Flex gap="4" flexDir="row">
                     <InputGroup size="md">
-                        <Input placeholder="16" value={units} onChange={(e) => setUnits(e.target.value)} />
+                        <Input placeholder="16" type="number" value={units} onChange={(e) => {
+                            // Limit to units to 0-32 and send a toast otherwise
+                            if (e.target.value < 2 || e.target.value > 32) {
+                                toast({
+                                    position: "bottom-right",
+                                    title: "Invalid Number of Units",
+                                    description: "You can only find schedules with 2-32 units.",
+                                    status: "warning",
+                                    duration: 5000,
+                                    isClosable: true,
+                                });
+                                return;
+                            }
+
+                            setUnits(e.target.value)
+                        }} />
                         <InputRightAddon children="Units"  />
                     </InputGroup>
                     <Button
