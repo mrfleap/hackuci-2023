@@ -22,7 +22,7 @@ import {
 import React from "react";
 import { FiBarChart2 } from "react-icons/fi";
 
-export default function Course(props) {
+export default function Course(props) { 
     const label = props.record?.label || props.schedule.course_name;
     const record = props.record || props.schedule.record;
     return (

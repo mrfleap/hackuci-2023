@@ -98,7 +98,7 @@ class Course:
         self.rmp = []
         self.median_gpa = []
         script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
-        rel_path = "../RMPscraper/merged.csv"
+        rel_path = "merged.csv"
         abs_file_path = os.path.join(script_dir, rel_path)
         for prof in self.professors:
             with open(abs_file_path, "r") as csvfile:

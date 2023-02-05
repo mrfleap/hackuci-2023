@@ -9,6 +9,7 @@ from typing import Any, List, Union
 from fastapi import Body, FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
+import requests
 
 from schedule.schedule_structure import Course, Course_Time, Schedule
 from schedule.generate import generate_possible_schedules, get_available_courses, rank_schedules
@@ -87,6 +88,13 @@ async def search_classes(query: str):
     search = courses.search(query)
 
     return {"classes": search["hits"]}
+
+@app.post("/save")
+async def save(body: dict = Body(...)):
+    # Make a post request to https://api.antalmanac.com/api/users/saveUserData and pass the body along as a json.dumps
+    req = requests.post("https://api.antalmanac.com/api/users/saveUserData", json=body)
+    print(req)
+    return {"ok": True}
 
 @app.post("/generate")
 async def generate(body: dict = Body(...)):
