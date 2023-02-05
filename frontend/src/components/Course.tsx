@@ -32,9 +32,8 @@ export default function Course(props) {
                     <Box>
                         <Text>{label}</Text>
                         <Text color={useColorModeValue("gray.500", "gray.500")}>
-                            {record.course_level} | {record.units} Units {props.schedule ? `| ${props.schedule.course_id}` : ''}
+                            {record.course_level} | {record.units} Units {props.schedule ? `| ${props.schedule.course_id}` : ""}
                         </Text>
-                        
                     </Box>
                     <Spacer minW="8" />
                     {props.record ? (
@@ -45,6 +44,25 @@ export default function Course(props) {
                         </Text>
                     )}
                 </Flex>
+                {props.schedule ? (
+                    <Flex alignContent="center" justifyContent="center">
+                        <Text whiteSpace="pre-line">{props.schedule.professors.join("\n")}</Text>
+                        <Text color="gray.500" whiteSpace="pre-line">
+                            RateMyProfessor:{" "}
+                            {typeof props.schedule.median_gpa == "number"
+                                ? props.schedule.rmp.toFixed(1)
+                                : props.schedule.rmp}
+                            /5
+                        </Text>
+                        <Spacer minW="8" />
+                        <Text color="gray.500">
+                            Avg. GPA:{" "}
+                            {typeof props.schedule.median_gpa == "number"
+                                ? props.schedule.median_gpa.toFixed(1)
+                                : props.schedule.median_gpa}
+                        </Text>
+                    </Flex>
+                ) : null}
                 <Popover>
                     <Flex alignContent="center" justifyContent="center" mt="6" gap="2">
                         <PopoverTrigger>

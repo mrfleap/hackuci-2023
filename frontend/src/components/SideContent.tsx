@@ -24,6 +24,7 @@ const asyncComponents = {
 function SideContent(props) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [classes, setClasses] = useLocalStorageState("wanted-classes", { defaultValue: [] });
+    const [units, setUnits] = useLocalStorageState("wanted-units", { defaultValue: 16 });
     const [value, setValue] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();
@@ -35,6 +36,7 @@ function SideContent(props) {
         axios
             .post("http://localhost:8000/generate", {
                 classes: classes,
+                units: units,
             })
             .then((resp) => {
                 console.log(resp.data);
@@ -89,7 +91,7 @@ function SideContent(props) {
                 <Flex pt="8" gap="2" flexDirection="column" flexGrow="1" overflowY="auto">
                     {classes.map((v, i) => (
                         <Course
-                            key="i"
+                            key={i}
                             record={v}
                             remove={() => {
                                 setClasses(classes.filter((c) => c != v));
@@ -99,7 +101,7 @@ function SideContent(props) {
                 </Flex>
                 <Flex gap="4" flexDir="row">
                     <InputGroup size="sm">
-                        <Input placeholder="16" />
+                        <Input placeholder="16" value={units} onChange={(e) => setUnits(e.target.value)} />
                         <InputRightAddon children="Units" />
                     </InputGroup>
                     <Button
