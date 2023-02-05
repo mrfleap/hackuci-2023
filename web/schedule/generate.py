@@ -1,3 +1,5 @@
+from functools import cmp_to_key
+from .ranking import get_schedule_score
 from .schedule_structure import Course, Schedule
 
 
@@ -34,6 +36,17 @@ def generate_possible_schedules(courses: list[Course], schedule: Schedule, units
 
     return schedules
 
+def rank_schedules(schedules: list[Schedule]):
+    def compare_schedule(s1, s2):
+        s1, s2 = get_schedule_score(s1), get_schedule_score(s2)
+        if s1 < s2:
+            return -1
+        elif s1 > s2:
+            return 1
+        return 0
+
+    schedules.sort(key=cmp_to_key(lambda s1, s2: get_schedule_score(s1) - get_schedule_score(s2)))
+
 
 if __name__ == "__main__":
     wanted_classes = ["CHC/LAT 62", "CHC/LAT 63", "DRAMA 199", "I&C SCI 31", "I&C SCI 6D"]
@@ -41,6 +54,7 @@ if __name__ == "__main__":
     available_courses = get_available_courses(wanted_classes)
     
     possible_schedules = generate_possible_schedules(available_courses, Schedule())
+    rank_schedules(possible_schedules)
     for i, s in enumerate(possible_schedules):
         print(f"Schedule {i}:")
         print(str(s))

@@ -9,13 +9,10 @@ from typing import Any, List, Union
 from fastapi import Body, FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
-
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir) 
+import requests
 
 from schedule.schedule_structure import Course, Course_Time, Schedule
-from schedule.generate import generate_possible_schedules, get_available_courses
+from schedule.generate import generate_possible_schedules, get_available_courses, rank_schedules
 
 app = FastAPI()
 
@@ -30,8 +27,8 @@ app.add_middleware(
 )
 
 def load_courses():
-    with open("courses.json", "r") as f:
-        courses_data = orjson.loads(f.read())
+    with open("courses.json", "rb") as f:
+        courses_data = orjson.load(f)
 
     values = []
     index = []
@@ -92,14 +89,22 @@ async def search_classes(query: str):
 
     return {"classes": search["hits"]}
 
+@app.post("/save")
+async def save(body: dict = Body(...)):
+    # Make a post request to https://api.antalmanac.com/api/users/saveUserData and pass the body along as a json.dumps
+    req = requests.post("https://api.antalmanac.com/api/users/saveUserData", json=body)
+    print(req)
+    return {"ok": True}
+
 @app.post("/generate")
 async def generate(body: dict = Body(...)):
     if not body.get("classes", {}):
         return {"ok": False, "error": "No classes provided", "schedules": []}
     
-    units = body.get("units", 16)
+    units = int(body.get("units", 16))
 
     wanted_classes = [c["course"] for c in body["classes"]]
+    print(f"Wanted courses: {len(wanted_classes)}")
     available_courses = get_available_courses(wanted_classes)
     print(f"Available courses: {len(available_courses)}")
     start = time.time()
@@ -108,11 +113,17 @@ async def generate(body: dict = Body(...)):
 
     # print(possible_schedules)
     print(f"Possible schedules: {len(possible_schedules)}")
+    start = time.time()
+    rank_schedules(possible_schedules)
+    print(f"Ranking took {time.time()-start:.2f}s to run")
+
+    possible_schedules = possible_schedules[:20] + possible_schedules[-20:]
 
     for schedule in possible_schedules:
         for course in schedule.courses:
             course.record = [c for c in COURSES if c["course"] == course.course_name][0]
             course.time_str = str(course.time)
+            course.getRMP_GPA()
 
     # print(body)
     # schedules = [
@@ -122,4 +133,4 @@ async def generate(body: dict = Body(...)):
     #     Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
     # ]
     
-    return {"ok": True, "schedules": possible_schedules[:20]}
+    return {"ok": True, "schedules": possible_schedules}

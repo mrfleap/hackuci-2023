@@ -1,7 +1,7 @@
 import copy
 from itertools import combinations
 import json
-import re
+import csv
 from typing import Iterable
 from typing import Any as Self
 
@@ -50,7 +50,7 @@ class Course_Time:
             pm = True
 
         time_str = f"{start // 100}:{start % 100 if start % 100 != 0 else '00'} - {end // 100}:{end % 100 if end % 100 != 0 else '00'}{'pm' if pm else ''}" if (start and end) else "TBA"
-        day_str = "/".join(d for i, d in enumerate(["M", "T", "W", "Th", "F", "Sat", "Sun"]) if [self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun][i])
+        day_str = "/".join(d for i, d in enumerate(["M", "Tu", "W", "Th", "F", "Sat", "Sun"]) if [self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun][i])
 
         return time_str + "\n" + day_str
 
@@ -86,6 +86,31 @@ class Course:
         self.location = location
         self.units = units
         self.course_info = course_info
+
+        # RMP data
+        self.rmp = -1
+        self.median_gpa = -1
+    
+    def getRMP_GPA(self):
+        """
+        Initializes self.rmp and self.median_gpa with data from RMP
+        """
+        self.rmp = []
+        self.median_gpa = []
+        script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+        rel_path = "merged.csv"
+        abs_file_path = os.path.join(script_dir, rel_path)
+        for prof in self.professors:
+            with open(abs_file_path, "r") as csvfile:
+                reader = csv.reader(csvfile, delimiter=",")
+                for line in reader:
+                    if prof == line[0] and line[4] and line[7]:
+                        self.rmp.append(float(line[4]))
+                        self.median_gpa.append(float(line[7]))
+                        break
+
+        self.rmp = sum(self.rmp) / len(self.rmp) if self.rmp else "NA"
+        self.median_gpa = sum(self.median_gpa) / len(self.median_gpa) if self.median_gpa else "NA"
 
     @classmethod
     def load_from_file(cls, only_names: Iterable[str]) -> list[Self]:
