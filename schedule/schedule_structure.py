@@ -93,6 +93,9 @@ class Course:
         self.median_gpa = -1
     
     def getRMP_GPA(self):
+        """
+        Initializes self.rmp and self.median_gpa with data from RMP
+        """
         self.rmp = 0
         self.median_gpa = 0
         script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
