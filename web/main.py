@@ -1,19 +1,21 @@
 import inspect
+import json as orjson
 import os
+import time
 import sys
 from typing import Any, List, Union
-import orjson
+# import orjson 
 
 from fastapi import Body, FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
-from fuzzy_match import algorithims
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir) 
 
 from schedule.schedule_structure import Course, Course_Time, Schedule
+from schedule.generate import generate_possible_schedules, get_available_courses
 
 app = FastAPI()
 
@@ -47,6 +49,8 @@ def load_courses():
             "prereq": course["prerequisite_text"],
             "restriction": course["restriction"],
             "ge_list": course["ge_list"],
+            "units": course["units"][0],
+            "course_level": course["course_level"],
         })
         index.append(label.lower())
     
@@ -90,12 +94,32 @@ async def search_classes(query: str):
 
 @app.post("/generate")
 async def generate(body: dict = Body(...)):
-    print(body.get("clasess", {}))
-    schedules = [
-        Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
-        Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
-        Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
-        Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
-    ]
+    if not body.get("classes", {}):
+        return {"ok": False, "error": "No classes provided", "schedules": []}
     
-    return {"ok": True, "schedules": schedules}
+    units = body.get("units", 16)
+
+    wanted_classes = [c["course"] for c in body["classes"]]
+    available_courses = get_available_courses(wanted_classes)
+    print(f"Available courses: {len(available_courses)}")
+    start = time.time()
+    possible_schedules = generate_possible_schedules(available_courses, Schedule(), units=units)
+    print(f"Took {time.time()-start:.2f}s to run")
+
+    # print(possible_schedules)
+    print(f"Possible schedules: {len(possible_schedules)}")
+
+    for schedule in possible_schedules:
+        for course in schedule.courses:
+            course.record = [c for c in COURSES if c["course"] == course.course_name][0]
+            course.time_str = str(course.time)
+
+    # print(body)
+    # schedules = [
+    #     Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
+    #     Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
+    #     Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
+    #     Schedule(courses=[Course("ICS 32A", 123, ["Pattis"], Course_Time(True, False, True, False, True, 900, 930), "ALP 1100")]),
+    # ]
+    
+    return {"ok": True, "schedules": possible_schedules[:20]}

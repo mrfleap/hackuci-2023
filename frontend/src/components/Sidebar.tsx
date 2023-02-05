@@ -99,7 +99,7 @@ export default function SimpleSidebar({ children }: { children: ReactNode }) {
                 {schedules.length > 0 ? (
                     <Flex flexWrap={"wrap"} gap="4" flexFlow={"row wrap"} alignContent="flex-start">
                         {schedules.map((s, i) => (
-                            <Schedule schedule={s} key={i} />
+                            <Schedule schedule={s} key={i} n={i + 1} />
                         ))}
                     </Flex>
                 ) : (

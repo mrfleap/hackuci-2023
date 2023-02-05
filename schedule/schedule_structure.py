@@ -2,7 +2,8 @@ import copy
 from itertools import combinations
 import json
 import re
-from typing import Iterable, Self
+from typing import Iterable
+from typing import Any as Self
 
 import os
 script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
@@ -33,7 +34,8 @@ class Course_Time:
         if self.mon and other.mon or self.tue and other.tue or self.wed and other.wed or self.thu and other.thu or self.fri and other.fri:
             if (self.start < other.end and other.start < self.end):
                 return True
-        if self.final_date == other.final_date and self.final_time == other.final_time:
+        if self.final_date and self.final_time and self.final_date == other.final_date and self.final_time == other.final_time:
+            # print(f"CONFLICT FINAL: {self.final_date} - {self.final_time}")
             return True
         return False
 
@@ -41,13 +43,16 @@ class Course_Time:
         start, end = self.start, self.end
         pm = False
 
-        if start > 1200:
+        if start and start > 1200:
             start -= 1200
-        if end > 1200:
+        if end and end > 1200:
             end -= 1200
             pm = True
 
-        return f"{start // 100}:{start % 100 if start % 100 != 0 else '00'} - {end // 100}:{end % 100 if end % 100 != 0 else '00'}{'pm' if pm else ''}\n{'M' if self.mon else ''}{'Tue' if self.tue else ''}{'W' if self.wed else ''}{'Thu' if self.thu else ''}{'F' if self.fri else ''}{'Sat' if self.sat else ''}{'Sun' if self.sun else ''}"
+        time_str = f"{start // 100}:{start % 100 if start % 100 != 0 else '00'} - {end // 100}:{end % 100 if end % 100 != 0 else '00'}{'pm' if pm else ''}" if (start and end) else "TBA"
+        day_str = "/".join(d for i, d in enumerate(["M", "T", "W", "Th", "F", "Sat", "Sun"]) if [self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun][i])
+
+        return time_str + "\n" + day_str
 
 
 class Professor:
