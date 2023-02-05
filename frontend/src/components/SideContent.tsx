@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Box, Button, CloseButton, Flex, Input, InputGroup, InputRightAddon, Text, useColorMode, useDisclosure, useToast } from "@chakra-ui/react";
+import { Box, Button, CloseButton, Flex, Heading, Image, Input, InputGroup, InputRightAddon, Text, useColorMode, useDisclosure, useToast } from "@chakra-ui/react";
 import Course from "./Course.tsx";
 
 import { AsyncSelect, chakraComponents } from "chakra-react-select";
+import peter from "../peter.jpg";
 
 import axios from "axios";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
@@ -29,17 +30,32 @@ function SideContent(props) {
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();
     const { colorMode, toggleColorMode } = useColorMode();
+    // Create a ref
+    // const selectRef = React.useRef(null);
+    // Create state for input
+    const [input, setInput] = useState("");
 
     // Create fetchCourses function which generates schedules from /generate and updates isLoading appropriately
     const fetchCourses = () => {
         setIsLoading(true);
         axios
-            .post("http://localhost:8000/generate", {
+            .post("https://zotapi.fly.dev/generate", {
                 classes: classes,
                 units: units,
             })
             .then((resp) => {
-                console.log(resp.data);
+
+                if (resp.data.schedules.length <= 0) {
+                    toast({
+                        position: "bottom-right",
+                        title: "No Schedules Possible",
+                        description: "Try adding more classes or increasing the number of units.",
+                        status: "warning",
+                        duration: 5000,
+                        isClosable: true,
+                    });
+                }                
+                
                 setIsLoading(false);
                 props.setSchedules(resp.data.schedules);
             }).catch((err) => {
@@ -61,19 +77,27 @@ function SideContent(props) {
         <>
             <Flex justifyContent={"space-between"} flexDirection={"column"} h="100%">
                 <Box w="100%">
+                    <Flex direction="column" alignItems="center" justifyItems="center">
+                        <Image src={peter} w="16rem"></Image>
+                        <Heading as="h2">ZotScheduler</Heading>
+                    </Flex>
                     <Flex h="20" alignItems="center" justifyContent="space-between" flex="0 0 auto">
                         <Text fontSize="2xl" fontWeight="bold">
                             Wanted Classes
                         </Text>
-                        <Button onClick={toggleColorMode}>{colorMode === "light" ? <MoonIcon /> : <SunIcon />}</Button>
-                        <CloseButton display={{ base: "flex", md: "none" }} onClick={props.onClose} />
+                        <Flex direction="row" gap="4" alignItems="center" justifyItems="center">
+                            <Button onClick={toggleColorMode}>{colorMode === "light" ? <MoonIcon /> : <SunIcon />}</Button>
+                            <CloseButton display={{ base: "flex", md: "none" }} onClick={props.onClose} />
+                        </Flex>
                     </Flex>
                     <AsyncSelect
                         placeholder="Add a class..."
                         components={asyncComponents}
+                        onInputChange={(v) => setInput(v)}
+                        noOptionsMessage={() => (input.length <= 0 ? "Type to search for a class..." : "No classes found")}
                         loadOptions={(inputValue, callback) => {
                             axios
-                                .get("http://localhost:8000/search_classes", {
+                                .get("https://zotapi.fly.dev/search_classes", {
                                     params: {
                                         query: inputValue,
                                     },
@@ -81,8 +105,34 @@ function SideContent(props) {
                                 .then((resp) => callback(resp.data.classes));
                         }}
                         onChange={(v) => {
-                            console.log(v);
                             setValue(null);
+                            // Cancel if class is already in classes based on class.course_id
+                            if (classes.some((c) => c.course_id == v.course_id)) {
+                                // Add a short toast (3s) that indicates the class was already added, including the course.name
+                                toast({
+                                    position: "bottom-right",
+                                    title: "Class Already Added",
+                                    description: `'${v.label}' is already in your list of wanted classes.`,
+                                    status: "info",
+                                    duration: 5000,
+                                    isClosable: true,
+                                });
+
+                                return;
+                            }
+                            // Limit the number of classes to 50, and send a toast on the message
+                            if (classes.length >= 50) {
+                                toast({
+                                    position: "bottom-right",
+                                    title: "Too Many Classes",
+                                    description: "You can only add up to 50 classes.",
+                                    status: "warning",
+                                    duration: 5000,
+                                    isClosable: true,
+                                });
+                                return;
+                            }
+                            
                             setClasses([v, ...classes]);
                         }}
                         value={value}
@@ -100,9 +150,9 @@ function SideContent(props) {
                     ))}
                 </Flex>
                 <Flex gap="4" flexDir="row">
-                    <InputGroup size="sm">
+                    <InputGroup size="md">
                         <Input placeholder="16" value={units} onChange={(e) => setUnits(e.target.value)} />
-                        <InputRightAddon children="Units" />
+                        <InputRightAddon children="Units"  />
                     </InputGroup>
                     <Button
                         isLoading={isLoading}

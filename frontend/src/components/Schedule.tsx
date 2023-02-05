@@ -71,8 +71,8 @@ const Schedule = (props) => {
                         //     method: "POST",
                         // });
 
-                        // Send a request to http://localhost:8000/save with the body payload json
-                        axios.post("http://localhost:8000/save", payload).then((res) => {
+                        // Send a request to https://zotapi.fly.dev /save with the body payload json
+                        axios.post("https://zotapi.fly.dev/save", payload).then((res) => {
                             // Show a Chakra ui toast with the code and instructions to put it into antalmanac.com
                             toast({
                                 title: "Saved to AntAlmanac",

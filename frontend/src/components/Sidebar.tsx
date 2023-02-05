@@ -161,17 +161,19 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             display={{ base: "block", md: "none" }}
             {...rest}
         >
-            <IconButton
-                display={{ base: "flex", md: "none" }}
-                onClick={onOpen}
-                variant="outline"
-                aria-label="open menu"
-                icon={<FiMenu />}
-            />
+            <Flex gap="2" dir="row" alignItems="center" pt="5">
+                <IconButton
+                    display={{ base: "flex", md: "none" }}
+                    onClick={onOpen}
+                    variant="outline"
+                    aria-label="open menu"
+                    icon={<FiMenu />}
+                />
 
-            <Text display={{ base: "flex", md: "none" }} fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-                Logo
-            </Text>
+                <Text display={{ base: "flex", md: "none" }} fontSize="2xl" fontFamily="monospace" fontWeight="bold">
+                    ZotScheduler
+                </Text>
+            </Flex>
         </Flex>
     );
 };

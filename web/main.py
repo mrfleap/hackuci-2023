@@ -9,6 +9,7 @@ from typing import Any, List, Union
 from fastapi import Body, FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import requests
 
 from schedule.schedule_structure import Course, Course_Time, Schedule
@@ -56,7 +57,11 @@ def load_courses():
 COURSES, INDEX = load_courses()
 
 import meilisearch
-client = meilisearch.Client('http://localhost:7700', "MASTER_KEY")
+import os
+if "MEILI_MASTER_KEY" in os.environ:
+    client = meilisearch.Client('https://zotmeili.fly.dev', os.environ["MEILI_MASTER_KEY"])
+else:
+    client = meilisearch.Client('http://localhost:7700', "MASTER_KEY")
 courses = client.index("courses")
 
 if __name__ == "__main__":
@@ -134,3 +139,5 @@ async def generate(body: dict = Body(...)):
     # ]
     
     return {"ok": True, "schedules": possible_schedules}
+
+app.mount("/", StaticFiles(directory="./static", html=True), name="static")
