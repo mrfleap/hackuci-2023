@@ -22,3 +22,7 @@ schedule.addCourse(course1)
 schedule.addCourse(course2)
 print(schedule)
 print(schedule.validSchedule())
+
+course = Course("I&CSCI 33", "12345", ["PATTIS, R.", "ALFARO, S."], time1, "HIB 100", 4)
+print(course.rmp)
+print(course.median_gpa)
