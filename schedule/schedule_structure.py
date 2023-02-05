@@ -2,6 +2,7 @@ import copy
 from itertools import combinations
 import json
 import re
+import csv
 from typing import Iterable
 from typing import Any as Self
 
@@ -86,6 +87,27 @@ class Course:
         self.location = location
         self.units = units
         self.course_info = course_info
+
+        # RMP data
+        self.rmp = -1
+        self.median_gpa = -1
+    
+    def getRMP_GPA(self):
+        self.rmp = 0
+        self.median_gpa = 0
+        script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+        rel_path = "..\RMPscraper\merged.csv"
+        abs_file_path = os.path.join(script_dir, rel_path)
+        for prof in self.professors:
+            with open(abs_file_path, "r") as csvfile:
+                reader = csv.reader(csvfile, delimiter=",")
+                for line in reader:
+                    if prof == line[0]:
+                        self.rmp += float(line[4])
+                        self.median_gpa += float(line[7])
+                        break
+        self.rmp /= len(self.professors)
+        self.median_gpa /= len(self.professors)
 
     @classmethod
     def load_from_file(cls, only_names: Iterable[str]) -> list[Self]:
